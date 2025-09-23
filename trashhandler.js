@@ -336,7 +336,7 @@ async function reply(text) {
                         title:"Trashcore-MD",
                         body:"made by trashcore",
                         thumbnailUrl: "https://url.bwmxmd.online/Adams.ilfx74ge.jpg",
-                        sourceUrl: docu,
+                        sourceUrl: null,
                         renderLargerThumbnail: false,
                     }
                 }
