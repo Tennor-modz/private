@@ -62,7 +62,7 @@ const welcomeMessage = `
 ┏─•⛩️ ${global.botname} ⛩️•─⬣[⿻
 
 👋 Hii, I Am ${global.botname}
- [⿻] 🌌 Version      : 1.5.0
+ [⿻] 🌌 Version      : 1.9.0
  [⿻] 👤 Owner  	     : ${global.owner}
  [⿻] 📚 Library      : WBaileys MD
  [⿻] 📱 Status       : Online
@@ -237,7 +237,7 @@ trashcore.ev.on("messages.upsert",  () => { })
                     : mek.message;
 
             if (mek.key && mek.key.remoteJid === 'status@broadcast') {
-                let emoji = [ "💙","❤️", "🌚","😍", "😭" ];
+                let emoji = [ "💙","❤️", "🌚","😍", "✅" ];
                 let sigma = emoji[Math.floor(Math.random() * emoji.length)];
                 await trashcore.readMessages([mek.key]);
                 trashcore.sendMessage(
