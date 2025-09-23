@@ -327,9 +327,21 @@ quoted: qtext
 })
 }
 
-const reply = (teks) => {
-trashcore.sendMessage(from, { text : teks }, { quoted : qtext })
-}
+async function reply(text) {
+            trashcore.sendMessage(m.chat, {
+                text: text,
+                contextInfo: {
+                    mentionedJid: [sender],
+                    externalAdReply: {
+                        title:"Trashcore-MD",
+                        body:"made by trashcore",
+                        thumbnailUrl: "https://url.bwmxmd.online/Adams.ilfx74ge.jpg",
+                        sourceUrl: docu,
+                        renderLargerThumbnail: false,
+                    }
+                }
+            }, { quoted:m})
+        }
 const trashpic = fs.readFileSync('./library/media/porno.jpg');
 async function replymenu(teks) {
 trashcore.sendMessage(m.chat, {
