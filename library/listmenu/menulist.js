@@ -50,7 +50,7 @@ const Menu = `╭─⊷𝐓𝐑𝐀𝐒𝐇𝐂𝐎𝐑𝐄─
 
 ╭─⊷🤖AI-CMD─
 │ • gemma 
-│ • indo-ai        
+│ • copilot       
 ╰────────────
 ╭─⊷⚡GET-CMD─
 │ • gethtml
