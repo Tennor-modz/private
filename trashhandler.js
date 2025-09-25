@@ -147,6 +147,7 @@ const setting = db.data.settings[botNumber]
     		if (!isNumber(setting.status)) setting.status = 0
     		if (!('autobio' in setting)) setting.autobio = false
             if (!('autoread' in setting)) setting.autoread = false
+            if (!('online' in setting)) setting.online = true
             if (!('autoTyping' in setting)) setting.autoTyping = false
             if (!('autoRecord' in setting)) setting.autoRecord = false
 //        if (!('goodbye' in setting)) chats.goodbye = setting.auto_leaveMsg
@@ -163,6 +164,7 @@ const setting = db.data.settings[botNumber]
    		goodbye: false,
     		onlygrub: false,
             onlypc: false,
+            online: false,
        welcome: true, 
     		autoread: false,
     		menuType: 'externalImage' //> buttonImage
@@ -209,6 +211,18 @@ setting.status = new Date() * 1
 	         return m.reply("Hello buddy! if you want to use this bot, please chat the bot in private chat")
 	     }
 	}
+    
+    ///unavailable and online 
+    if (!trashcore.public) {
+            if (trashown && !m.key.fromMe) return
+        }
+        if (db.data.settings[botNumber].online) {
+        	if (command) {
+        
+trashcore.sendPresenceUpdate('unavailable', from)
+        }
+        }
+    
 async function ephoto(url, texk) {
 let form = new FormData 
 let gT = await axios.get(url, {
@@ -387,6 +401,22 @@ if (m.isGroup) {
         reaction(m.chat, "❓")
     }
  }
+    async function loading () {
+var menuload = [
+"《 █▒▒▒▒▒▒▒▒▒▒▒》10%",
+"《 ████▒▒▒▒▒▒▒▒》30%",
+"《 ███████▒▒▒▒▒》50%",
+"《 ██████████▒▒》80%",
+"《 ████████████》100%",
+" Trashcore system..."
+]
+let { key } = await trashcore.sendMessage(from, {text: 'ʟᴏᴀᴅɪɴɢ...'})
+
+for (let i = 0; i < menuload.length; i++) {
+await reply( menuload[i],{edit:key })
+}
+}
+    
 ///////////////Similarity///////////////////////
 function getCaseNames() {
   try {
@@ -758,7 +788,7 @@ return plugins
 //========= [ COMMANDS PLUGINS ] =================================================
 let pluginsDisable = true
 const plugins = await pluginsLoader(path.resolve(__dirname, "trashplugs"))
-const trashdex = { trashown, reply,replymenu,command,isCmd, text, botNumber, prefix, reply,fetchJson,example, totalfeature,trashcore,m,q,mime,sleep,fkontak,addPremiumUser, args,delPremiumUser,isPremium,trashpic,trashdebug,sleep,isAdmins,groupAdmins,isBotAdmins,quoted,from,groupMetadata,downloadAndSaveMediaMessage,heaven,menu,quotedMessage}
+const trashdex = { trashown, reply,replymenu,command,isCmd, text, botNumber, prefix, reply,fetchJson,example, totalfeature,trashcore,m,q,mime,sleep,fkontak,addPremiumUser, args,delPremiumUser,isPremium,trashpic,trashdebug,sleep,isAdmins,groupAdmins,isBotAdmins,quoted,from,groupMetadata,downloadAndSaveMediaMessage,heaven,menu,loading,quotedMessage}
 for (let plugin of plugins) {
 if (plugin.command.find(e => e == command.toLowerCase())) {
 pluginsDisable = false
@@ -1065,6 +1095,19 @@ db.data.settings[botNumber].onlypc = false
 reply(`Successfully Changed Onlypc To ${q}`)
 }
 break
+//==================================================//      
+       case 'unavailable':
+                if (!trashown) return reply(mess.owner)
+                if (args.length < 1) return reply(`Example ${prefix + command} on/off`)
+                if (q === 'on') {
+                    db.data.settings[botNumber].online = true
+                    reply(`Successfully changed unavailable to ${q}`)
+                } else if (q === 'off') {
+                    db.data.settings[botNumber].online = false
+                    reply(`Successfully changed unavailable to ${q}`)
+                }
+            break
+        
         
 //==================================================//           
         case 'antilink': {
@@ -1617,7 +1660,23 @@ break;
         
       
 //==================================================//     
-     
+     case 'request': 
+case 'suggest': {
+  if (!text) return reply(`Example : ${prefix + command} hi dev play command is not working`)
+  let textt = `*| REQUEST/SUGGESTION |*`
+  let teks1 = `\n\n*User* : @${m.sender.split("@")[0]}\n*Request/Bug* : ${text}`
+  let teks2 = `\n\n*Hii ${pushname},You request has been forwarded to the support group*.\n*Please wait...*`
+  const groupId = '120363400441291112@g.us'; // replace with your group ID
+  trashcore.sendMessage(groupId, {
+    text: textt + teks1,
+    mentions: [m.sender],
+  }, { quoted: m })
+  trashcore.sendMessage(m.chat, {
+    text: textt + teks2 + teks1,
+    mentions: [m.sender],
+  }, { quoted: m })
+}
+break
 
 
                
