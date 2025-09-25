@@ -850,6 +850,113 @@ break
         redeployApp();
     }
 	break;
+        
+        case 'video': {
+  try {
+    if (!text) return reply('What video do you want to download?');
+
+    let videoUrl = '';
+    let videoTitle = '';
+    let videoThumbnail = '';
+
+    if (text.startsWith('http://') || text.startsWith('https://')) {
+      videoUrl = text;
+    } else {
+      const { videos } = await yts(text);
+      if (!videos || videos.length === 0) return reply('No videos found!');
+      videoUrl = videos[0].url;
+      videoTitle = videos[0].title;
+      videoThumbnail = videos[0].thumbnail;
+    }
+
+    const izumi = {
+      baseURL: "https://izumiiiiiiii.dpdns.org"
+    };
+
+    const AXIOS_DEFAULTS = {
+      timeout: 60000,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'application/json, text/plain, */*'
+      }
+    };
+
+    const tryRequest = async (getter, attempts = 3) => {
+      let lastError;
+      for (let attempt = 1; attempt <= attempts; attempt++) {
+        try {
+          return await getter();
+        } catch (err) {
+          lastError = err;
+          if (attempt < attempts) {
+            await new Promise(r => setTimeout(r, 1000 * attempt));
+          }
+        }
+      }
+      throw lastError;
+    };
+
+    const getIzumiVideoByUrl = async (youtubeUrl) => {
+      const apiUrl = `${izumi.baseURL}/downloader/youtube?url=${encodeURIComponent(youtubeUrl)}&format=720`;
+      const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
+      if (res?.data?.result?.download) return res.data.result;
+      throw new Error('Izumi video API returned no download');
+    };
+
+    const getOkatsuVideoByUrl = async (youtubeUrl) => {
+      const apiUrl = `https://okatsu-rolezapiiz.vercel.app/downloader/ytmp4?url=${encodeURIComponent(youtubeUrl)}`;
+      const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
+      if (res?.data?.result?.mp4) {
+        return {
+          download: res.data.result.mp4,
+          title: res.data.result.title
+        };
+      }
+      throw new Error('Okatsu API returned no mp4');
+    };
+
+    // Send thumbnail
+    try {
+      const ytId = (videoUrl.match(/(?:youtu\.be\/|v=)([a-zA-Z0-9_-]{11})/) || [])[1];
+      const thumb = videoThumbnail || (ytId ? `https://i.ytimg.com/vi/${ytId}/sddefault.jpg` : undefined);
+      const captionTitle = videoTitle || text;
+
+      if (thumb) {
+        await trashcore.sendMessage(m.chat, {
+          image: { url: thumb },
+          caption: `*${captionTitle}*\n> _🏂searching video data..._`,
+        }, { quoted: m });
+      }
+    } catch (e) {
+      console.error('[VIDEO] Thumbnail Error:', e?.message || e);
+    }
+
+    // Validate YouTube URL
+    const urls = videoUrl.match(/(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch\?v=|v\/|embed\/|shorts\/|playlist\?list=)?)([a-zA-Z0-9_-]{11})/gi);
+    if (!urls) return reply('This is not a valid YouTube link!');
+
+    // Try downloading video
+    let videoData;
+    try {
+      videoData = await getIzumiVideoByUrl(videoUrl);
+    } catch (e1) {
+      console.warn('[VIDEO] Izumi failed, trying Okatsu:', e1?.message || e1);
+      videoData = await getOkatsuVideoByUrl(videoUrl);
+    }
+
+    await trashcore.sendMessage(m.chat, {
+      video: { url: videoData.download },
+      mimetype: 'video/mp4',
+      fileName: `${videoData.title || videoTitle || 'video'}.mp4`,
+      caption: `*${videoData.title || videoTitle || 'Video'}*`,
+    }, { quoted: m });
+
+  } catch (error) {
+    console.error('[VIDEO] Command Error:', error?.message || error);
+    reply('Download failed: ' + (error?.message || 'Unknown error'));
+  }
+  break;
+}
 //==================================================//        
    case 'weather': {
 		      try {
@@ -929,6 +1036,61 @@ let regex1 = /(?:https|git)(?::\/\/|@)github\.com[\/:]([^\/:]+)\/(.+)/i
                 trashcore.sendMessage(m.chat, { image: { url: search.all[0].thumbnail },  caption: teks }, { quoted: m })
             }
             break  
+        
+        case 'shorturl': {
+const zlib = require('zlib');
+const qs = require('querystring');      
+const kualatshort = async (url) => {
+  const res = await axios.post(
+    'https://kua.lat/shorten',
+    qs.stringify({ url }),
+    {
+      responseType: 'arraybuffer',
+      headers: {
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Language': 'id-ID,id;q=0.9,en-AU;q=0.8,en;q=0.7,en-US;q=0.6',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Origin': 'https://kua.lat',
+        'Referer': 'https://kua.lat/',
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    }
+  )
+
+  let decoded
+  const encoding = res.headers['content-encoding']
+
+  if (encoding === 'br') {
+    decoded = zlib.brotliDecompressSync(res.data)
+  } else if (encoding === 'gzip') {
+    decoded = zlib.gunzipSync(res.data)
+  } else if (encoding === 'deflate') {
+    decoded = zlib.inflateSync(res.data)
+  } else {
+    decoded = res.data
+  }
+
+  return JSON.parse(decoded.toString())
+}
+  
+    try {
+      if (!text) return m.reply('Use : .shorturl https://example.com')
+      
+      const result = await kualatshort(text)
+
+      if (!result?.data?.shorturl) {
+        return m.reply('failed to create url.')
+      }
+
+      reply(`🔗 *Short URL:*\n${result.data.shorturl}`)
+    } catch (e) {
+      console.error('[SHORTURL] Error:', e)
+      reply(`Error: ${e.message}`)
+    }
+    break
+  }
        
 //==================================================//  
 case 'goodbye': {
