@@ -4,6 +4,7 @@ const Menu = `╭─⊷𝐓𝐑𝐀𝐒𝐇𝐂𝐎𝐑𝐄─
 │▢ Owner:${global.ownername}
 │▢ Version: 1.8.0
 │▢ Type: ${global.typebot}
+│▢ Web: www.trashcoreweb.zone.id
 ╰────────────
 ╭─⊷🐦‍🔥MAIN-CMD─
 │ • menu                    
