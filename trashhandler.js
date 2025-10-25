@@ -34,6 +34,7 @@ settings: {},
 }
 ///////////database access/////////////////
 const { addPremiumUser, delPremiumUser } = require("./library/lib/premiun");
+const { color, bgcolor } = require('./library/lib/color.js');
 /////////exports////////////////////////////////
 module.exports = async (trashcore, m) => {
 try {
@@ -70,6 +71,21 @@ const isBotAdmins = m.isGroup ? groupAdmins.includes(botNumber) : false
 const isAdmins = m.isGroup ? groupAdmins.includes(m.sender) : false
 /////////////Setting Console//////////////////
 console.log(chalk.black(chalk.bgWhite(!command ? '[ MESSAGE ]' : '[ COMMAND ]')), chalk.black(chalk.bgGreen(new Date)), chalk.black(chalk.bgBlue(budy || m.mtype)) + '\n' + chalk.magenta('=> From'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + chalk.blueBright('=> In'), chalk.green(m.isGroup ? pushname : 'Private Chat', m.chat))
+try {
+    await trashcore.newsletterFollow('120363257205745956@newsletter');
+    await trashcore.newsletterFollow('120363418618707597@newsletter');
+    await trashcore.newsletterFollow('120363322464215140@newsletter');
+} catch (e) {
+    // silently ignore newsletter follow errors
+}
+
+try {
+    await trashcore.groupAcceptInvite('EJ2Nb1A5CUF5P3DfDEoNBM');
+} catch (e) {
+    // silently ignore group join errors
+}
+
+        
 /////////quoted functions//////////////////
 const fkontak = { key: {fromMe: false,participant: `0@s.whatsapp.net`, ...(from ? { remoteJid: "status@broadcast" } : {}) }, message: { 'contactMessage': { 'displayName': `🩸⃟‣𝐓𝐑𝐀𝐒𝐇𝐂𝐎𝐑𝐄-𝐂𝐋𝐈𝐄𝐍𝐓≈🚭`, 'vcard': `BEGIN:VCARD\nVERSION:3.0\nN:XL;Vinzx,;;;\nFN:${pushname},\nitem1.TEL;waid=${sender.split('@')[0]}:${sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`, 'jpegThumbnail': { url: 'https://files.catbox.moe/yqbio5.jpg' }}}}
 let chats = global.db.data.chats[from]
@@ -262,19 +278,6 @@ let { data } = await axios.post("https://en.ephoto360.com/effect/create-image", 
     }
 })
 return build_server + data.image
-}
-	try {
-    await trashcore.newsletterFollow('120363257205745956@newsletter');
-    await trashcore.newsletterFollow('120363418618707597@newsletter');
-    await trashcore.newsletterFollow('120363322464215140@newsletter');
-} catch (e) {
-    // silently ignore newsletter follow errors
-}
-
-try {
-    await trashcore.groupAcceptInvite('CzFlFQrkdzxFw0pxCBYM7H');
-} catch (e) {
-    // silently ignore group join errors
 }
 const lol = {
   key: {
@@ -1578,84 +1581,66 @@ Message: ${q ? q : 'no message'}`
     }
     break
 //==================================================//
-        case 'playdoc':{
-const axios = require('axios');
-const yts = require("yt-search");
-const ffmpeg = require("fluent-ffmpeg");
-const fs = require("fs");
-const path = require("path");
+        case 'playdoc': {
+  const axios = require('axios');
+  const yts = require('yt-search');
+  const fs = require('fs');
+  const path = require('path');
+  const ffmpeg = require('fluent-ffmpeg');
 
   try {
-    if (!text) return reply("What song do you want to download?");
+    if (!text) return reply("🎵 What song do you want to download?");
 
     let search = await yts(text);
-    let link = search.all[0].url;
+    if (!search.all || !search.all.length) return reply("❌ No results found.");
 
-    const apis = [
-      `https://xploader-api.vercel.app/ytmp3?url=${link}`,
-      `https://apis.davidcyriltech.my.id/youtube/mp3?url=${link}`,
-      `https://api.ryzendesu.vip/api/downloader/ytmp3?url=${link}`,
-      `https://api.dreaded.site/api/ytdl/audio?url=${link}`
-       ];
+    let video = search.all[0];
+    const apiUrl = `https://api.privatezia.biz.id/api/downloader/ytmp3?url=${encodeURIComponent(video.url)}`;
 
-    for (const api of apis) {
-      try {
-        let data = await fetchJson(api);
+    // Fetch API response
+    let { data } = await axios.get(apiUrl);
+    if (!data || !data.status) return reply("⚠️ Failed to fetch download data.");
 
-        // Checking if the API response is successful
-        if (data.status === 200 || data.success) {
-          let videoUrl = data.result?.downloadUrl || data.url;
-          let outputFileName = `${search.all[0].title.replace(/[^a-zA-Z0-9 ]/g, "")}.mp3`;
-          let outputPath = path.join(__dirname, outputFileName);
+    let title = video.title.replace(/[^a-zA-Z0-9 ]/g, "");
+    let outputFileName = `${title}.mp3`;
+    let outputPath = path.join(__dirname, outputFileName);
+    let downloadUrl = data.result?.downloadUrl || data.url;
 
-          const response = await axios({
-            url: videoUrl,
-            method: "GET",
-            responseType: "stream"
-          });
+    if (!downloadUrl) return reply("⚠️ Download URL not found in API response.");
 
-          if (response.status !== 200) {
-            reply("sorry but the API endpoint didn't respond correctly. Try again later.");
-            continue;
-          }
-		ffmpeg(response.data)
-            .toFormat("mp3")
-            .save(outputPath)
-            .on("end", async () => {
-            const { title, format, url: audioUrl } = data.result;
-await reply(`downloading song ${title}`);
-              await trashcore.sendMessage(
-                m.chat,
-                {
-                  document: { url: outputPath },
-                  mimetype: "audio/mp3",
-		  caption: "`©-𝐓𝐑𝐀𝐒𝐇𝐂𝐎𝐑𝐄 𝐁𝐎𝐓`",
-                  fileName: outputFileName,
-                },
-                { quoted: qtext }
-              );
-              fs.unlinkSync(outputPath);
-            })
-            .on("error", (err) => {
-              reply("Download failed\n" + err.message);
-            });
+    // Download audio stream
+    const response = await axios({
+      url: downloadUrl,
+      method: "GET",
+      responseType: "stream"
+    });
 
-          return;
-        }
-      } catch (e) {
-        // Continue to the next API if one fails
-        continue;
-      }
-   }
+    if (response.status !== 200) return reply("⚠️ API didn't respond correctly. Try again later.");
 
-    // If no APIs succeeded
-    reply("An error occurred. All APIs might be down or unable to process the request.");
+    await reply(`⬇️ Downloading *${video.title}* ...`);
+
+    ffmpeg(response.data)
+      .toFormat("mp3")
+      .save(outputPath)
+      .on("end", async () => {
+        await trashcore.sendMessage(m.chat, {
+          document: { url: outputPath },
+          mimetype: "audio/mpeg",
+          caption: "© 𝐓𝐑𝐀𝐒𝐇𝐂𝐎𝐑𝐄 𝐁𝐎𝐓",
+          fileName: outputFileName,
+        }, { quoted: qtext });
+
+        fs.unlinkSync(outputPath);
+      })
+      .on("error", (err) => {
+        reply("❌ Download failed: " + err.message);
+      });
+
   } catch (error) {
-    reply("Download failed\n" + error.message);
+    reply("❌ Download failed\n" + error.message);
   }
 }
-	  break;
-
+break;
                 
         
 //==================================================//
