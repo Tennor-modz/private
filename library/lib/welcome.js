@@ -1,4 +1,4 @@
-const { generateWAMessageFromContent, generateWAMessage, prepareWAMessageMedia, downloadContentFromMessage, proto, delay } = require('@whiskeysockets/baileys')
+const { generateWAMessageFromContent, generateWAMessage, prepareWAMessageMedia, downloadContentFromMessage, proto, delay } = require('@trashcore/baileys')
 const fs = require('fs')
 const axios = require('axios')
 const path = require('path')
