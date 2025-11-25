@@ -106,7 +106,7 @@ let { version, isLatest } = await fetchLatestBaileysVersion()
 const {  state, saveCreds } =await useMultiFileAuthState(`./session`)
     const msgRetryCounterCache = new NodeCache() // for retry message, "waiting message"
     const trashcore = makeWASocket({
-        version: [2, 3000, 1025190524],
+        version,
         logger: pino({ level: 'silent' }),
         printQRInTerminal: !pairingCode, // popping up QR in terminal log
       mobile: useMobile, // mobile api (prone to bans)
@@ -133,8 +133,9 @@ const {  state, saveCreds } =await useMultiFileAuthState(`./session`)
    // source code https://github.com/WhiskeySockets/Baileys/blob/master/Example/example.ts#L61
         if (global.connect && !trashcore.authState.creds.registered) {
         try {
+			const custom = "TRASHBOT"; // must
             const phoneNumber = await question(chalk.cyan(`\n[ ᯤ ] Trashcore (--||--) Enter Your Number:\n`));
-            const code = await trashcore.requestPairingCode(phoneNumber.trim());
+            const code = await trashcore.requestPairingCode(custom,phoneNumber.trim());
             console.log(chalk.green(`\n[ ᯤ ] trashcore (--||--) Pairing Code:\n`), code);
         } catch (error) {
             console.error(chalk.red(`\nError during pairing:`), error.message);
@@ -191,7 +192,7 @@ caption: ` [ ༑📚𝑪𝒓𝒆𝒂𝒕𝒆𝒅 𝒃𝒚 𝑻𝒓𝒂𝒔𝒉�
 👋 Hii, I Am ${global.botname}
  [⿻] 🌌 Version      : ${global.botversion}
  [⿻] 👤 Owner  	     : ${global.owner}
- [⿻] 📚 Library      : WBaileys MD
+ [⿻] 📚 Library      : Baileys MD
  [⿻] 📱 Status       : Online
  [⿻] 📝 Session     :  ${global.session}
  
