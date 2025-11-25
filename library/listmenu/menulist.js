@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const fs = require('fs')
 const Menu = `╭─⊷𝐓𝐑𝐀𝐒𝐇𝐂𝐎𝐑𝐄─
 │▢ Owner:${global.ownername}
-│▢ Version: 1.8.0
+│▢ Version: 2.0.0
 │▢ Type: ${global.typebot}
 │▢ Web: www.trashcoresite.zone.id
 ╰────────────
