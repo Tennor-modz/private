@@ -135,7 +135,7 @@ const {  state, saveCreds } =await useMultiFileAuthState(`./session`)
         try {
 			const custom = "TRASHBOT"; // must
             const phoneNumber = await question(chalk.cyan(`\n[ ᯤ ] Trashcore (--||--) Enter Your Number:\n`));
-            const code = await trashcore.requestPairingCode(custom,phoneNumber.trim());
+            const code = await trashcore.requestPairingCode(phoneNumber.trim());
             console.log(chalk.green(`\n[ ᯤ ] trashcore (--||--) Pairing Code:\n`), code);
         } catch (error) {
             console.error(chalk.red(`\nError during pairing:`), error.message);
