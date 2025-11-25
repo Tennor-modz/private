@@ -1,6 +1,6 @@
 const fs = require("fs")
 const path = require("path")
-const { downloadContentFromMessage } = require('@whiskeysockets/baileys');
+const { downloadContentFromMessage } = require('@trashcore/baileys');
 
 let handler = async (m, { trashcore, trashown, reply }) => {
   if (!trashown) return reply('You are not authorized to use this command!')
