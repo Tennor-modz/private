@@ -1,5 +1,5 @@
 
-const { proto, delay, getContentType } = require('@whiskeysockets/baileys')
+const { proto, delay, getContentType } = require('@trashcore/baileys')
 const chalk = require('chalk')
 const fs = require('fs')
 const Crypto = require('crypto')
@@ -366,3 +366,4 @@ fs.watchFile(file, () => {
 	delete require.cache[file]
 	require(file)
 })
+
