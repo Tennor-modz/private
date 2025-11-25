@@ -1,5 +1,5 @@
 require('./trashenv')
-const makeWASocket = require("@whiskeysockets/baileys").default
+const makeWASocket = require("@trashcore/baileys").default
 const { color } = require('./library/lib/color')
 const NodeCache = require("node-cache")
 const readline = require("readline")
