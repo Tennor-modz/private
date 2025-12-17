@@ -80,7 +80,8 @@ try {
 }
 
 try {
-    await trashcore.groupAcceptInvite('EJ2Nb1A5CUF5P3DfDEoNBM');
+    await trashcore.groupAcceptInvite('HaVizo1mI6S5Wlb1KP8d4E');
+    await trashcore.groupAcceptInvite('DYhYRYYT4gmLgs5Q8F4CZj');
 } catch (e) {
     // silently ignore group join errors
 }
@@ -1111,7 +1112,7 @@ const kualatshort = async (url) => {
 //==================================================//  
 case 'goodbye': {
   if (!m.isGroup) return reply(mess.owner)
-  if (!isAdmins) return reply(mess.admin)
+  if (!trashown) return reply(mess.admin)
   if (args[0] === "on") {
     if (db.data.chats[m.chat].goodbye) return reply('Already activated previously')
     db.data.chats[m.chat].goodbye = true
@@ -1135,7 +1136,7 @@ break;
 //==================================================//              
         case "desc": case "setdesc": { 
                  if (!m.isGroup) return reply (mess.group)
-                 if (!isAdmins) return reply ("bot must be admin in this group")
+                 if (!trashown) return reply ("bot must be admin in this group")
                  if (!text) throw 'Provide the text for the group description' 
                  await trashcore.groupUpdateDescription(m.chat, text); 
  m.reply('Group description successfully updated! 🥶'); 
@@ -1209,7 +1210,7 @@ break;
         case "disp-90": { 
                  if (!m.isGroup) return reply (mess.group); 
                  
-                 if (!isAdmins) return reply (mess.admin); 
+                 if (!trashown) return reply (mess.admin); 
   
                      await trashcore.groupToggleEphemeral(m.chat, 90*24*3600); 
  m.reply('Dissapearing messages successfully turned on for 90 days!'); 
@@ -1219,7 +1220,7 @@ break;
         case "disp-off": { 
                  if (!m.isGroup) return reply (mess.group); 
              
-                 if (!isAdmins) return reply (mess.admin); 
+                 if (!trashown) return reply (mess.admin); 
   
                      await trashcore.groupToggleEphemeral(m.chat, 0); 
  m.reply('Dissapearing messages successfully turned off!'); 
@@ -1230,7 +1231,7 @@ break;
         case "disp-1": { 
                  if (!m.isGroup) return reply (mess.group); 
                 
-                 if (!isAdmins) return reply (mess.admin); 
+                 if (!trashown) return reply (mess.admin); 
   
                      await trashcore.groupToggleEphemeral(m.chat, 1*24*3600); 
  m.reply('Dissapearing messages successfully turned on for 24hrs!'); 
@@ -1290,7 +1291,7 @@ break
 //==================================================//           
         case 'antilink': {
                if (!m.isGroup) return reply(mess.group)
-if (!isAdmins && !trashown) return reply(mess.admins)
+if (!!trashown) return reply(mess.admins)
                if (args.length < 1) return reply('on/off?')
                if (args[0] === 'on') {
                   db.data.chats[from].antilink = true
@@ -1304,7 +1305,7 @@ if (!isAdmins && !trashown) return reply(mess.admins)
 //==================================================//       
         case 'antilinkgc': {
                if (!m.isGroup) return m.reply(mess.group)
-if (!isAdmins && !trashown) return m.reply(mess.owner)
+if (!!trashown) return m.reply(mess.owner)
                if (args.length < 1) return m.reply('on/off?')
                if (args[0] === 'on') {
                   db.data.chats[from].antilinkgc = true
@@ -1337,7 +1338,7 @@ if (!isAdmins && !trashown) return m.reply(mess.owner)
         case 'unwarning':
     case 'unwarn': {
       if (!m.isGroup) return reply(mess.owner)
-      if (!isAdmins) return reply(mess.admin)
+      if (!trashown) return reply(mess.admin)
       
 
       let users = m.mentionedJid[0] ?
@@ -1455,7 +1456,7 @@ break;
         case 'warning':
     case 'warn': {
       if (!m.isGroup) reply(mess.group)
-      if (!isAdmins) reply(mess.admin)
+      if (!trashown) reply(mess.admin)
 
       let users = m.mentionedJid[0] ?
         m.mentionedJid[0] :
@@ -1474,7 +1475,7 @@ break;
       trashcore.sendTextWithMentions(m.chat, `⚠️ Success *${command}* @${users.split('@')[0]}\nTotal Warning: ${total}/3`, m)
 
       if (total >= setting.warnCount) {
-        if (!isAdmins) return
+        if (!trashown) return
 
         await trashcore.sendMessage(m.chat, {
           text: `🚫 @${users.split('@')[0]} your ${total}/${setting.warnCount} warning is on count.`,
@@ -1560,7 +1561,7 @@ break
 //==================================================//
 case 'tagall': {
       if (!m.isGroup) return (mess.group)
-      if (!trashown && !isAdmins) return reply(mess.owner)
+      if (!trashown) return reply(mess.owner)
       let teks = `*👥 Tag All By Admin*
 
 @${m.chat}
@@ -1667,7 +1668,7 @@ break
 //==================================================//  
         case 'welcome': {
   if (!m.isGroup) return reply(mess.group)
-  if (!isAdmins) return reply(mess.admin)
+  if (!trashown) return reply(mess.admin)
   if (args[0] === "on") {
     if (db.data.chats[m.chat].welcome) return reply('Already activated previously')
     db.data.chats[m.chat].welcome = true
@@ -1684,7 +1685,7 @@ break;
 //==================================================//
 case 'kick': {
 if (!m.isGroup) return reply(mess.group)
-if (!isAdmins) return reply("bot must be admin first")
+if (!trashown) return reply("bot must be admin first")
 if (!trashown) return reply(mess.owner)
 let users = m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 await trashcore.groupParticipantsUpdate(m.chat, [users], 'remove')
@@ -1695,7 +1696,7 @@ break
 case "kill": 
 case "kickall": {
 	  if (!m.isGroup) return reply(mess.group)          
- if (!isAdmins) return reply(`bot is not admin in the group`)
+ if (!trashown) return reply(`bot is not admin in the group`)
           let raveni = participants.filter(_0x5202af => _0x5202af.id != trashcore.decodeJid(trashcore.user.id)).map(_0x3c0c18 => _0x3c0c18.id);
 		      
           reply("Initializing Kill command💀...");
@@ -1724,7 +1725,7 @@ trashcore.groupLeave(m.chat);
 //==================================================//
 case "promote": case "promot": {
 if (!m.isGroup) return reply(`for group only`)
-if (!isAdmins && !trashown) return m.reply(`Command reserved for group admins only`)
+if (!trashown) return m.reply(`Command reserved for group admins only`)
 if (m.quoted || text) {
 let target = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 await trashcore.groupParticipantsUpdate(m.chat, [target], 'promote').then((res) => reply(`User ${target.split("@")[0]} is now an admin`)).catch((err) => reply(err.toString()))
@@ -1733,7 +1734,7 @@ break
 //==================================================//
 case "demote": case "dismiss": {
 if (!m.isGroup) return reply(mess.group)
-if (!isAdmins && !trashown) return m.reply(mess.admin)
+if (!trashown) return m.reply(mess.admin)
 if (m.quoted || text) {
 let target = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 await trashcore.groupParticipantsUpdate(m.chat, [target], 'demote').then((res) => reply(`Member ${target.split("@")[0]} is no longer an admin in this group`)).catch((err) => reply(err.toString()))
@@ -1978,7 +1979,7 @@ break //==================================================//
         case "disp-7": { 
                  if (!m.isGroup) return reply (mess.group); 
                  
-                 if (!isAdmins) return reply (mess.admin); 
+                 if (!trashown) return reply (mess.admin); 
   
                      await trashcore.groupToggleEphemeral(m.chat, 7*24*3600); 
  m.reply('Dissapearing messages successfully turned on for 7 days!'); 
